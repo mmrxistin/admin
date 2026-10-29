@@ -1,0 +1,282 @@
+// Bismillahirrahmanirahim
+// Elhamdullillahirabbulalemin
+// Es-selatu vesselamu ala rasulina Muhammedin 
+// Allah u Ekber, Allah u Ekber, Allah u Ekber, La ilahe illAllah
+// La ilahe illAllahu vahdehu la şerike leh lehul mulku ve lehul hamdu
+// ALLAH U EKBER VELILLAHIL HAMD
+
+// El Hamdu Lîllah ya Kerîm î Rezzaq î Vehhab î Ehed î Quddus î Heq bêdawîtî..
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+// ============================================
+// USER & SESSION
+// ============================================
+
+model User {
+  id           String     @id
+  username     String     @unique
+  displayName  String
+  email        String?    @unique
+  passwordHash String?
+  role         String     @default("USER")
+  googleId     String?    @unique
+  avatarUrl    String?
+  bio          String?
+  sessions     Session[]
+  duyem        Duyem[]
+  du           du[]
+  Yek          Yek[]
+  Penc         Penc[]
+  createdAt    DateTime   @default(now())
+  yekayeke     yekayeke[]
+  Dirok        Dirok[]
+  Mmmpeyam     Mmmpeyam[]
+  Tefsir       Tefsir[]
+  Car          Car[]
+  se           se[]
+  xane         Xane[]
+  rojname      Rojname[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// ============================================
+// CONTENT MODELS (Posts)
+// ============================================
+
+model Yek {
+  id          String   @id @default(cuid())
+  content     String[]
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments Media[]
+  createdAt   DateTime @default(now())
+
+  @@map("Yek")
+}
+
+model Duyem {
+  id          String   @id @default(cuid())
+  content     String[]
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments Media[]
+  createdAt   DateTime @default(now())
+
+  @@map("duyem")
+}
+
+model Mmmpeyam {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("mmmpeyam")
+}
+
+model Xane {
+  id          String   @id @default(cuid())
+  content     String[]
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments Media[]
+  createdAt   DateTime @default(now())
+
+  @@map("xane")
+}
+
+model Rojname {
+  id          String   @id @default(cuid())
+  content     String[]
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments Media[]
+  createdAt   DateTime @default(now())
+
+  @@map("rojname")
+}
+
+model Penc {
+  id          String   @id @default(cuid())
+  content     String[]
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments Media[]
+  createdAt   DateTime @default(now())
+
+  @@map("Penc")
+}
+
+model se {
+  id          String   @id @default(cuid())
+  content     String[]
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments Media[]
+  createdAt   DateTime @default(now())
+
+  @@map("se")
+}
+
+model Car {
+  id          String   @id @default(cuid())
+  content     String[]
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments Media[]
+  createdAt   DateTime @default(now())
+
+  @@map("Car")
+}
+
+model yekayeke {
+  id          String   @id @default(cuid())
+  content     String[]
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments Media[]
+  createdAt   DateTime @default(now())
+
+  @@map("yekayeke")
+}
+
+model Tefsir {
+  id          String   @id @default(cuid())
+  content     String[]
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments Media[]
+  createdAt   DateTime @default(now())
+
+  @@map("tefsir")
+}
+
+model MalperPage {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?
+  content     String
+  layout      String   @default("standard")
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("malper_pages")
+}
+
+model Dirok {
+  id          String   @id @default(cuid())
+  content     String[]
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments Media[]
+  createdAt   DateTime @default(now())
+
+  @@map("dirok")
+}
+
+model du {
+  id          String   @id @default(cuid())
+  content     String[]
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments Media[]
+  createdAt   DateTime @default(now())
+
+  @@map("du")
+}
+
+// ============================================
+// SITE CONTENT MODEL — Malper içerikleri admin tarafından yönetilir
+// ============================================
+
+model SiteContent {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  data      Json
+  updatedAt DateTime @updatedAt
+
+  @@map("site_content")
+}
+
+// ============================================
+// MEDIA MODEL
+// ============================================
+
+model Media {
+  id        String    @id @default(cuid())
+  type      MediaType
+  url       String
+  createdAt DateTime  @default(now())
+
+  // Relations to content tables
+  YekId String?
+  Yek   Yek?    @relation(fields: [YekId], references: [id])
+
+  duyemId String?
+  Duyem   Duyem?  @relation(fields: [duyemId], references: [id], onDelete: SetNull)
+
+  xaneId String?
+  Xane   Xane?   @relation(fields: [xaneId], references: [id], onDelete: SetNull)
+
+  PencId String?
+  Penc   Penc?   @relation(fields: [PencId], references: [id], onDelete: SetNull)
+
+  yekayekeId String?
+  yekayeke   yekayeke? @relation(fields: [yekayekeId], references: [id])
+
+  tefsirId String?
+  Tefsir   Tefsir? @relation(fields: [tefsirId], references: [id])
+
+  duId String?
+  du   du?     @relation(fields: [duId], references: [id])
+
+  seId String?
+  se   se?     @relation(fields: [seId], references: [id])
+
+  CarId String?
+  Car   Car?    @relation(fields: [CarId], references: [id], onDelete: Cascade)
+
+  dirokId String?
+  Dirok   Dirok?  @relation(fields: [dirokId], references: [id])
+
+  rojnameId String?
+  Rojname   Rojname? @relation(fields: [rojnameId], references: [id], onDelete: SetNull)
+
+  @@map("post_media")
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+// La ilahe illAllahu vahdehu la sharika leh, lehu'l-mulku ve lehu'l-hamdu,
+// Yuhyi ve Yumit
+// Bîyadîhîl Xayr
+//  ve huve ala kulli şey'in kadir
+// Elhamdulillah Elhamdulillah Elhamdulillah
+// Elhamdulillahirabbilalemin
